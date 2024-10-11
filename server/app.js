@@ -3,38 +3,34 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
-const createError = require('http-errors');
 const dotenv = require('dotenv');
 
 const loginRoutes = require('./routes/loginRoutes');
+const authRoutes = require('./routes/authRoutes');
+const psychologistRoutes = require('./routes/psychologistRoutes');
 
 dotenv.config();
 
 const app = express();
 
+// Configuración del body parser
 app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ limit: '100mb', extended: true }));
 
-
-const mongo = require('../server/config/dbconfig');
+const mongo = require('../server/config/dbconfig'); // Asegúrate de que la conexión a la base de datos esté configurada correctamente
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(cors());
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use((req, res, next) => {
-  res.set('Cache-Control', 'no-store');
-  next();
-});
 
 // Configura las rutas
-app.use('/', loginRoutes);  // <- Podría estar causando conflicto con la raíz
-
+app.use('/', loginRoutes);
+app.use('/auth', authRoutes);
+app.use('/api', psychologistRoutes); // O donde quieras montar las rutas
 
 // Manejar la ruta raíz
 app.get('/', (req, res) => {
@@ -42,28 +38,17 @@ app.get('/', (req, res) => {
 });
 
 // Catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
-
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(err.status || 500);
-  res.json({
-    message: err.message,
-    error: process.env.NODE_ENV === 'development' ? err : {}
-  });
+app.use((req, res, next) => {
+  res.status(404).json({ message: 'Not Found' });
 });
 
 // Error handler
-app.use(function(err, req, res, next) {
-  // Set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // Render the error page
-  res.status(err.status || 500);
-  res.render('error');
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).json({
+    message: err.message,
+    error: process.env.NODE_ENV === 'development' ? err : {}
+  });
 });
 
 module.exports = app;

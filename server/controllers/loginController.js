@@ -23,10 +23,10 @@ const iniciarSesion = async (req, res) => {
       case 'Administrador':
         tipoUsuario = 'Administrador';
         break;
-      case 'auditor':
+      case 'Psicologo':
         tipoUsuario = 'Psicologo';
         break;
-      case 'auditado':
+      case 'Paciente':
         tipoUsuario = 'Paciente';
         break;
       default:

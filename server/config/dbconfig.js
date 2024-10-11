@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Usuarios = require('../models/usuariosSchema');
+const Psychologist = require("../models/PsychologistSchema");
 
 const MONGODB_URL = process.env.MONGODB_URL;
 
@@ -9,10 +10,10 @@ mongoose.connection.on('connected', async () => {
 
   try {
     // Busca un usuario root
-    const user = await Usuarios.findOne({ Correo: 'fredyesparza08@gmail.com' });
+    const user = await Psychologist.findOne({ Correo: 'fredyesparza08@gmail.com' });
     if (!user) {
       // Si no existe un usuario root, crea uno
-      const rootUser = new Usuarios({
+      const rootUser = new Psychologist({
         Nombre: 'root',
         Correo: 'fredyesparza08@gmail.com',
         Contraseña: 'root321', // Asegúrate de encriptar esta contraseña en un entorno de producción
@@ -32,7 +33,8 @@ mongoose.connection.on('connected', async () => {
   }
 });
 
-mongoose.connect(MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+// Conexión a MongoDB sin opciones obsoletas
+mongoose.connect(MONGODB_URL)
   .catch(err => console.error('Error al conectar a MongoDB:', err));
 
 module.exports = mongoose;

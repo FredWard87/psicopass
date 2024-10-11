@@ -1,24 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+// App.js
+import React, { createContext } from 'react';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Login from './components/Login/LoginForm'
+import PagInicio from './components/Homes/Inicio'
+import Citas from './components/GestionCitas/citas'; 
+import AuthProvider from './authProvider';
+import Datos from './components/GestionDatos/datos'
+import Expedientes from './components/GestionExpedientes/Expedientes'
+
+export const UserContext = createContext(null);
 
 function App() {
   return (
+    <AuthProvider>
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} /> 
+          <Route path="/home" element={<PagInicio />} /> 
+          <Route path="/Gestión_de_citas" element={<Citas />} /> 
+          <Route path="/Datosgenerales" element={<Datos />} /> 
+          <Route path="/ExpedientesGestion" elemente={<Expedientes />} />
+        </Routes>
+      </Router>
     </div>
+    </AuthProvider>
   );
 }
 

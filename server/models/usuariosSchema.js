@@ -9,6 +9,7 @@ const UsuariosSchema = new mongoose.Schema({
     unique: true,
     match: [/^\S+@\S+\.\S+$/, "Por favor ingrese un correo válido"],
   },
+  AñosExperiencia: { type: Number, default: 0 },
   Contraseña: { type: String, required: true },
   Puesto: {
     type: String,
@@ -16,12 +17,36 @@ const UsuariosSchema = new mongoose.Schema({
       return this.TipoUsuario === 'auditor';
     }
   },
-  TipoUsuario: { type: String },
-  Telefono: {
+  FechaIngreso: {
+    type: Date,
+    required: function() {
+      return this.TipoUsuario === 'auditor';
+    }
+  },
+  Escolaridad: {
     type: String,
-    required: true,
-    match: [/^\d{10}$/, "Por favor ingrese un número de teléfono válido de 10 dígitos"],
-  }
+    required: function() {
+      return this.TipoUsuario === 'auditor';
+    }
+  },
+  Carrera: {
+    type: String,
+    required: function() {
+      return this.TipoUsuario === 'auditor';
+    }
+  },
+  TipoUsuario: { type: String },
+  PromedioEvaluacion: { type: Number, default: 0 },
+  PuntuacionEspecialidad: { type: Number, default: 0 },
+  FormaParteEquipoInocuidad: { type: Boolean, default: false },
+  Aprobado: { type: Boolean, default: false },
+  calificaciones: [
+    {
+      nombreCurso: { type: String, required: true },
+      calificacion: { type: Number, required: true }
+    }
+  ],
+  Departamento: { type: String, required: false} // Añadido
 });
 
 // Hash de la contraseña antes de guardar
