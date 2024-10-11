@@ -3,11 +3,14 @@ import axios from 'axios';
 import './css/PsychologistData.css';
 import Navigation from "../Navigation/Navbar";
 
+const daysOfWeek = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
 
 const PsychologistData = () => {
-  const [psicologos, setPsychologists] = useState({}); // Inicializar como objeto vacío
+  const [psicologos, setPsychologists] = useState({});
+  const [selectedDay, setSelectedDay] = useState(daysOfWeek[0]); // Día seleccionado (Lunes por defecto)
   const [newTime, setNewTime] = useState('');
   const [message, setMessage] = useState('');
+  const [openDay, setOpenDay] = useState(null); // Día abierto para mostrar horarios
 
   // Fetch psychologist data
   const fetchPsychologistData = async () => {
@@ -16,7 +19,7 @@ const PsychologistData = () => {
       if (response.data && response.data.length > 0) {
         setPsychologists(response.data[0]); // Establece el primer psicólogo
       } else {
-        setPsychologists({}); // Si no hay datos, establece un objeto vacío
+        setPsychologists({});
       }
     } catch (error) {
       console.error('Error fetching psychologist data:', error);
@@ -27,18 +30,26 @@ const PsychologistData = () => {
     fetchPsychologistData();
   }, []);
 
-  // Handle new time input
+  // Handle time change
   const handleTimeChange = (e) => {
     setNewTime(e.target.value);
+  };
+
+  // Handle day selection
+  const handleDayChange = (e) => {
+    setSelectedDay(e.target.value);
   };
 
   // Submit new time
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (newTime && psicologos._id) { // Asegúrate de que el psicólogo tenga un ID
+    if (newTime && psicologos._id) {
       const updatedPsicologos = {
         ...psicologos,
-        availableTimes: [...(psicologos.availableTimes || []), newTime], // Asegúrate de inicializar como array vacío
+        Horarios: {
+          ...psicologos.Horarios,
+          [selectedDay]: [...(psicologos.Horarios?.[selectedDay] || []), newTime], // Añadir el nuevo horario al día seleccionado
+        }
       };
 
       try {
@@ -53,39 +64,70 @@ const PsychologistData = () => {
     }
   };
 
-  return (
-    
-    <div className="psychologist-data">
-         <div style={{ position: 'absolute', top: 0, left: 0 }}>
-        <Navigation />
-      </div>
-      <h2>Datos del Psicólogo</h2>
-      <p><strong>Nombre:</strong> {psicologos.Nombre || 'N/A'}</p>
-      <p><strong>Email:</strong> {psicologos.Correo || 'N/A'}</p>
-      <p><strong>Número Telefonico:</strong> {psicologos.Telefono || 'N/A'}</p>
+  // Toggle open day
+  const toggleOpenDay = (day) => {
+    setOpenDay(prevOpenDay => (prevOpenDay === day ? null : day));
+  };
 
-      <h3>Horarios Disponibles</h3>
-      <ul>
-        {Array.isArray(psicologos.availableTimes) && psicologos.availableTimes.length > 0 ? (
-          psicologos.availableTimes.map((time, index) => (
-            <li key={index} className="fade-in">{time}</li>
-          ))
-        ) : (
-          <li>No hay horarios disponibles.</li>
-        )}
-      </ul>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Añadir nuevo horario"
-          value={newTime}
-          onChange={handleTimeChange}
-          required
-        />
-        <button type="submit">Añadir Horario</button>
-      </form>
-      {message && <p className="message">{message}</p>}
-    </div>
+  return (
+    <>
+      <Navigation />
+      <div className="psychologist-data">
+        <h2>Datos del Psicólogo</h2>
+        <div className="psychologist-info">
+          <p><strong>Nombre:</strong> {psicologos.Nombre || 'N/A'}</p>
+          <p><strong>Email:</strong> {psicologos.Correo || 'N/A'}</p>
+          <p><strong>Número Teléfono:</strong> {psicologos.Telefono || 'N/A'}</p>
+        </div>
+
+        <div className="days-container">
+          {daysOfWeek.map((day) => (
+            <div className="day-card" key={day}>
+              <div className="day-header" onClick={() => toggleOpenDay(day)}>
+                <h4>{day}</h4>
+              </div>
+              {openDay === day && (
+                <div className="day-horarios">
+                  <ul>
+                    {Array.isArray(psicologos.Horarios?.[day]) && psicologos.Horarios[day].length > 0 ? (
+                      psicologos.Horarios[day].map((time, index) => (
+                        <li key={index} className="fade-in">{time}</li>
+                      ))
+                    ) : (
+                      <li>No hay horarios disponibles para {day}.</li>
+                    )}
+                  </ul>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <form onSubmit={handleSubmit} className="time-form">
+          <label htmlFor="day">Seleccionar Día:</label>
+          <select id="day" value={selectedDay} onChange={handleDayChange}>
+            {daysOfWeek.map((day) => (
+              <option key={day} value={day}>
+                {day}
+              </option>
+            ))}
+          </select>
+
+          <label htmlFor="time">Seleccionar Hora:</label>
+          <input
+            type="time"
+            id="time"
+            value={newTime}
+            onChange={handleTimeChange}
+            required
+            className="time-input"
+          />
+          
+          <button type="submit" className="submit-button">Añadir Horario</button>
+        </form>
+        {message && <p className="message">{message}</p>}
+      </div>
+    </>
   );
 };
 

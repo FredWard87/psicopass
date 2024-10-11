@@ -1,10 +1,15 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
-
-const Horarios = new mongoose.Schema({
-  availabeTimes: { type : [String], default:[]}
-})
+const HorariosSchema = new mongoose.Schema({
+  Lunes: { type: [String], default: [] },
+  Martes: { type: [String], default: [] },
+  Miércoles: { type: [String], default: [] },
+  Jueves: { type: [String], default: [] },
+  Viernes: { type: [String], default: [] },
+  Sábado: { type: [String], default: [] },
+  Domingo: { type: [String], default: [] }
+});
 
 const PsychologistSchema = new mongoose.Schema({
   Nombre: { type: String, required: true },
@@ -27,7 +32,7 @@ const PsychologistSchema = new mongoose.Schema({
     required: true,
     match: [/^\d{10}$/, "Por favor ingrese un número de teléfono válido de 10 dígitos"],
   },
-  Horarios:[Horarios]
+  Horarios: { type: HorariosSchema, default: () => ({}) }
 });
 
 // Hash de la contraseña antes de guardar
@@ -45,7 +50,7 @@ PsychologistSchema.pre('save', async function(next) {
   }
 });
 
-// Métodos para verificar la contraseña
+// Método para verificar la contraseña
 PsychologistSchema.methods.comparePassword = function(candidatePassword) {
   return bcrypt.compare(candidatePassword, this.Contraseña);
 };
