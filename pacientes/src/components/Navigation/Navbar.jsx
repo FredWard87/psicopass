@@ -67,9 +67,9 @@ function DrawerList({ handleLogout }) {
 
   const drawerItems = [
     { text: "Inicio", href: "/Home" },
-    { text: "Datos Generales", href: "/Datosgenerales" },
-    { text: "Gestión de Expedientes", href: "/expedi" },
-    { text: "Gestión de Citas", href: "/Gestión_de_citas" },
+    { text: "Datos Generales", href: "/" },
+    { text: "Gestión de Expedientes", href: "/" },
+    { text: "Gestión de Citas", href: "/" },
   ];
 
   return (

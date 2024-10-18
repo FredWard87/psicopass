@@ -1,6 +1,7 @@
-/* PsychologistData.css */
 body {
   font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 .psychologist-data {
@@ -8,8 +9,103 @@ body {
   margin: 20px auto;
   padding: 20px;
   border-radius: 10px;
-  background-color: #ffffff; /* Fondo blanco para el contenedor principal */
+  background-color: #ffffff;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.add-time-button {
+  padding: 12px 20px;
+  background-color: #3498db; /* Color de fondo vibrante */
+  color: white; /* Color del texto */
+  border: none; /* Sin borde */
+  border-radius: 25px; /* Bordes redondeados */
+  font-size: 16px; /* Tamaño de fuente */
+  cursor: pointer; /* Cambiar el cursor al pasar el ratón */
+  transition: background-color 0.3s, transform 0.2s; /* Transiciones suaves */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+}
+
+.add-time-button:hover {
+  background-color: #2980b9; /* Color de fondo más oscuro al pasar el ratón */
+  transform: translateY(-3px); /* Elevación sutil */
+}
+
+.add-time-button:focus {
+  outline: none; /* Sin contorno al enfocar */
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5); /* Sombra al enfocar */
+}
+
+.main-title {
+  color: #333;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 28px;
+}
+
+.calendar {
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.weekly-schedule-form {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.time-inputs {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.time-label {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.time-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.submit-button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #45a049;
+}
+
+.submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.schedules-container {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
@@ -21,17 +117,46 @@ h2 {
 .psychologist-info {
   margin-bottom: 20px;
   padding: 15px;
-  background-color: #e3f2fd; /* Color suave para la información del psicólogo */
+  background-color: #e3f2fd;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.update-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 8px 12px;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.update-button:hover {
+  background-color: #219150;
 }
 
 .days-container {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 15px;
   margin-bottom: 20px;
+}
+
+@media (max-width: 1200px) {
+  .days-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .days-container {
+    grid-template-columns: 1fr;
+  }
 }
 
 .day-card {
@@ -40,9 +165,8 @@ h2 {
   padding: 15px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   transition: transform 0.2s;
-  width: calc(100% / 3 - 10px); /* Ajusta el ancho según la cantidad de columnas */
   cursor: pointer;
-  border-left: 5px solid #2980b9; /* Línea lateral color azul */
+  border-left: 5px solid #2980b9;
 }
 
 .day-card:hover {
@@ -54,8 +178,8 @@ h2 {
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  background-color: #2980b9; /* Fondo azul para el encabezado */
-  color: white; /* Texto blanco */
+  background-color: #2980b9;
+  color: white;
   padding: 10px;
   border-radius: 5px;
 }
@@ -75,14 +199,29 @@ h2 {
 
 .day-card ul li {
   padding: 5px;
-  background-color: #f8f8f8; /* Color suave para los horarios */
+  background-color: #f8f8f8;
   border-radius: 4px;
   margin: 5px 0;
   transition: background-color 0.2s;
 }
 
 .day-card ul li:hover {
-  background-color: #e1f5fe; /* Efecto hover suave */
+  background-color: #e1f5fe;
+}
+
+.delete-button {
+  padding: 8px 12px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+.delete-button:hover {
+  background-color: #c0392b;
 }
 
 .time-form {
@@ -96,15 +235,19 @@ label {
   font-weight: bold;
 }
 
+select,
 input[type="time"] {
   padding: 10px;
   border: 1px solid #2980b9;
   border-radius: 5px;
-  transition: border-color 0.3s;
+  background-color: #f1f1f1;
+  transition: border-color 0.3s, background-color 0.3s;
 }
 
+select:focus,
 input[type="time"]:focus {
   border-color: #1abc9c;
+  background-color: #e9f7ef;
   outline: none;
 }
 
@@ -134,9 +277,166 @@ input[type="time"]:focus {
 
 @keyframes fadeIn {
   from {
-      opacity: 0;
+    opacity: 0;
   }
   to {
-      opacity: 1;
+    opacity: 1;
+  }
+}
+
+.time-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+  background-color: #f4f9fd;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+/* Estilos para el modal flotante */
+.modal-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999; /* Asegúrate de que esté encima de otros elementos */
+}
+
+.modal {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  padding: 30px;
+  width: 90%;
+  max-width: 500px; /* Ancho máximo para el modal */
+  animation: slideIn 0.3s ease-out; /* Efecto de entrada */
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal h3 {
+  margin-bottom: 20px;
+  color: #2980b9;
+  text-align: center;
+}
+
+.modal label {
+  display: block;
+  margin-bottom: 8px;
+  color: #34495e; /* Color para las etiquetas */
+}
+
+.modal input {
+  padding: 10px;
+  border: 1px solid #2980b9;
+  border-radius: 5px;
+  width: calc(100% - 22px); /* Ajusta el ancho */
+  margin-bottom: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+}
+
+.submit-update-button {
+  padding: 10px;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 100%; /* Botón de ancho completo */
+}
+
+.submit-update-button:hover {
+  background-color: #219150;
+}
+
+.cancel-button {
+  padding: 10px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 100%; /* Botón de ancho completo */
+  margin-top: 10px; /* Espaciado */
+}
+
+.cancel-button:hover {
+  background-color: #c0392b;
+}
+
+.close-button {
+  cursor: pointer;
+  color: #e74c3c;
+  float: right;
+  font-size: 20px;
+}
+
+.close-button:hover {
+  color: #c0392b;
+}
+
+/* Ajuste adicional para pantallas pequeñas */
+@media (max-width: 480px) {
+  .psychologist-data {
+    padding: 10px;
+    margin: 10px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  .psychologist-info {
+    padding: 10px;
+  }
+
+  .day-card {
+    padding: 10px;
+  }
+
+  .day-header {
+    padding: 8px;
+  }
+
+  select,
+  input[type="time"] {
+    padding: 8px;
+  }
+
+  .submit-button {
+    padding: 8px;
+  }
+
+  .update-button,
+  .delete-button {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+
+  .modal {
+    width: 95%; /* Asegura que el modal no sea demasiado estrecho en pantallas pequeñas */
   }
 }

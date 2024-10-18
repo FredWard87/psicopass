@@ -1,25 +1,30 @@
-const Usuarios = require('../models/usuariosSchema');
+// Importa el modelo correcto para psicólogos
+const Psychologists = require('../models/PsychologistSchema'); // Asegúrate de que la ruta sea correcta
 const bcrypt = require("bcryptjs");
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const iniciarSesion = async (req, res) => {
-  const { Correo, Contraseña } = req.body;
+  const { Correo, Contraseña } = req.body; // Obtén correo y contraseña del body
 
   try {
-    const usuario = await Usuarios.findOne({ Correo });
+    // Buscar al psicólogo por correo en la base de datos
+    const psicologo = await Psychologists.findOne({ Correo });
 
-    if (!usuario) {
+    // Si no se encuentra el psicólogo, retorna un error
+    if (!psicologo) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
-    const esContraseñaCorrecta = await bcrypt.compare(Contraseña, usuario.Contraseña);
+    // Verificar si la contraseña es correcta comparando la que se recibe con la almacenada
+    const esContraseñaCorrecta = await bcrypt.compare(Contraseña, psicologo.Contraseña);
     if (!esContraseñaCorrecta) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
+    // Obtener el tipo de usuario
     let tipoUsuario = '';
-    switch (usuario.TipoUsuario) {
+    switch (psicologo.TipoUsuario) {
       case 'Administrador':
         tipoUsuario = 'Administrador';
         break;
@@ -34,10 +39,11 @@ const iniciarSesion = async (req, res) => {
         break;
     }
 
-    const token = jwt.sign({ userId: usuario._id }, process.env.JWT_SECRET, { expiresIn: '8h' });
-   
+    // Crear un token JWT con una duración de 8 horas
+    const token = jwt.sign({ userId: psicologo._id }, process.env.JWT_SECRET, { expiresIn: '8h' });
 
-    return res.status(200).json({ token, tipo: tipoUsuario, usuario: { Correo: usuario.Correo, Nombre: usuario.Nombre, TipoUsuario: tipoUsuario } });
+    // Devolver el token, tipo de usuario y algunos datos del usuario
+    return res.status(200).json({ token, tipo: tipoUsuario, usuario: { Correo: psicologo.Correo, Nombre: psicologo.Nombre, TipoUsuario: tipoUsuario } });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error interno del servidor' });

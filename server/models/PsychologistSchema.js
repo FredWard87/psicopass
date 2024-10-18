@@ -1,23 +1,39 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
-const HorariosSchema = new mongoose.Schema({
-  Lunes: { type: [String], default: [] },
-  Martes: { type: [String], default: [] },
-  Miércoles: { type: [String], default: [] },
-  Jueves: { type: [String], default: [] },
-  Viernes: { type: [String], default: [] },
-  Sábado: { type: [String], default: [] },
-  Domingo: { type: [String], default: [] }
+// Esquema para Horarios con validaciones
+const WeeklyScheduleSchema = new mongoose.Schema({
+  semanaInicio: {
+    type: Date,
+    required: true
+  },
+  horaInicio: {
+    type: String,
+    required: true,
+    match: [/^[0-9]{2}:[0-9]{2}$/, "El horario debe estar en formato HH:MM"]
+  },
+  horaFin: {
+    type: String,
+    required: true,
+    match: [/^[0-9]{2}:[0-9]{2}$/, "El horario debe estar en formato HH:MM"]
+  }
 });
 
+// Esquema para la experiencia laboral
+const ExperienciaLaboralSchema = new mongoose.Schema({
+  años: { type: Number, required: true },
+  áreasDeEspecialización: { type: [String], required: true },
+  tiposDeTerapia: { type: [String], required: true }
+});
+
+// Esquema principal para Psicólogos
 const PsychologistSchema = new mongoose.Schema({
   Nombre: { type: String, required: true },
   Correo: {
     type: String,
     required: true,
     unique: true,
-    match: [/^\S+@\S+\.\S+$/, "Por favor ingrese un correo válido"],
+    match: [/^\S+@\S+\.\S+$/, "Por favor ingrese un correo válido"]
   },
   Contraseña: { type: String, required: true },
   Puesto: {
@@ -26,13 +42,18 @@ const PsychologistSchema = new mongoose.Schema({
       return this.TipoUsuario === 'auditor';
     }
   },
-  TipoUsuario: { type: String },
+  TipoUsuario: { type: String, required: true },
   Telefono: {
     type: String,
     required: true,
-    match: [/^\d{10}$/, "Por favor ingrese un número de teléfono válido de 10 dígitos"],
+    match: [/^\d{10}$/, "Por favor ingrese un número de teléfono válido de 10 dígitos"]
   },
-  Horarios: { type: HorariosSchema, default: () => ({}) }
+  Horario: { type: [WeeklyScheduleSchema], default: [] },
+  Filosofía: { type: String, required: false }, // Nuevo campo
+  DescripciónDeTratamiento: { type: String, required: false }, // Nuevo campo
+  ExperienciaLaboral: { type: [ExperienciaLaboralSchema], default: [] }, // Nuevo campo de experiencia laboral
+}, {
+  timestamps: true // Marca las fechas de creación y actualización
 });
 
 // Hash de la contraseña antes de guardar

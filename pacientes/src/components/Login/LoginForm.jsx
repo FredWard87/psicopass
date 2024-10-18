@@ -42,11 +42,11 @@ const LoginForm = () => {
       const { token, usuario } = response.data;
   
       // Verificación del tipo de usuario (si solo permites administradores o psicólogos)
-      if (usuario.TipoUsuario !== 'Administrador' && usuario.TipoUsuario !== 'Psicologo') {
+      if (usuario.TipoUsuario !== 'Administrador' && usuario.TipoUsuario !== 'Pacientes') {
         Swal.fire({
           icon: 'error',
           title: 'Acceso denegado',
-          text: 'Solo los administradores o psicólogos pueden iniciar sesión.',
+          text: 'Solo los administradores o pacientes pueden iniciar sesión.',
         });
         return;
       }
@@ -75,7 +75,7 @@ const LoginForm = () => {
         <div className="form-group">
           <div className='espacio'>
             <img src={logo} alt="Logo Empresa" className="logo-empresa-login" />
-            <div className='tipo-usuario'>Psicólogos</div>
+            <div className='tipo-usuario'>Pacientes</div>
           </div>
         </div>
         <form className="login-form" onSubmit={handleSubmit}>

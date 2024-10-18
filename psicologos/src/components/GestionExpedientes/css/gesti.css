@@ -1,0 +1,92 @@
+.expedientes-container {
+    max-width: 90%;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  .expediente-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .expediente-table th,
+  .expediente-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .expediente-table th {
+    background-color: #2980b9;
+    color: white;
+  }
+  
+  .expediente-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .expediente-table tbody tr:hover {
+    background-color: #e1f5fe;
+  }
+  
+  .expediente-form {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .form-title {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 20px;
+  }
+  
+  .form-input,
+  .form-textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 15px;
+  }
+  
+  .submit-button {
+    padding: 10px;
+    background-color: #2980b9;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .submit-button:hover {
+    background-color: #1abc9c;
+  }
+  
+  .expedientes-list {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .exp expediente-card {
+    padding: 15px;
+    border: 1px solid #e1e1e1;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    transition: background-color 0.2s;
+  }
+  
+  .exp expediente-card:hover {
+    background-color: #f0f8ff;
+  }
+  
