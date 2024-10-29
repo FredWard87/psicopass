@@ -26,7 +26,6 @@ const CitaSchema = new mongoose.Schema({
       type: String,
       required: true
     }
-    // Agrega aquí otras propiedades relevantes del psicólogo
   },
   motivo: {
     type: String,
