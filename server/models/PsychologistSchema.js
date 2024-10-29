@@ -7,6 +7,9 @@ const WeeklyScheduleSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
+  semanaFin: {
+    type: Date,
+  },
   horaInicio: {
     type: String,
     required: true,

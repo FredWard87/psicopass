@@ -6,7 +6,7 @@ import PagInicio from './components/Homes/Inicio'
 import Citas from './components/GestionCitas/citas'; 
 import AuthProvider from './authProvider';
 import Datos from './components/GestionDatos/datos'
-import Expedientes from './components/GestionExpedientes/Expedientes'
+import Expedientes from './components/GestionExpedientes/expedientes'
 
 export const UserContext = createContext(null);
 
@@ -18,7 +18,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} /> 
           <Route path="/home" element={<PagInicio />} /> 
-          <Route path="/Gestión_de_citas" element={<Citas />} /> 
+          <Route path="/Gestióncitas" element={<Citas />} /> 
           <Route path="/Datosgenerales" element={<Datos />} /> 
           <Route path="/expedi" element={<Expedientes />} />
         </Routes>

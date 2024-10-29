@@ -18,7 +18,7 @@ const AuthProvider = ({ children }) => {
         const token = localStorage.getItem('token');
         // Si ya tienes token y datos de usuario guardados, no hagas otra consulta
         if (token && !userData) {
-          const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/verifyToken`, { token });
+          const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth2/verifyToken2`, { token });
           const data = { ...response.data, token };
           setUserData(data);
           localStorage.setItem('userData', JSON.stringify(data));

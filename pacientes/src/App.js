@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from './components/Login/LoginForm'
 import PagInicio from './components/Homes/Inicio'
 import AuthProvider from './authProvider';
+import Citas from './components/Citas/citaForm'
 
 
 export const UserContext = createContext(null);
@@ -16,6 +17,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} /> 
           <Route path="/home" element={<PagInicio />} /> 
+          <Route path="/citass" element={<Citas />} /> 
+
         </Routes>
       </Router>
     </div>

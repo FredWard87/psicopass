@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const Usuarios = require('../models/PsychologistSchema');
+const Psychologists = require('../models/PsychologistSchema');
+const Patients = require('../models/pacienteSchema');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -19,10 +20,15 @@ router.post('/verifyToken', async (req, res) => {
     // Verifica el token JWT
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Busca al usuario en la base de datos usando el ID del token decodificado
-    const usuario = await Usuarios.findById(decoded.userId);
+    // Busca al usuario en la colección de psicólogos
+    let usuario = await Psychologists.findById(decoded.userId);
 
-    // Si el usuario no es encontrado
+    // Si no se encuentra en psicólogos, buscar en pacientes
+    if (!usuario) {
+      usuario = await Patients.findById(decoded.userId);
+    }
+
+    // Si el usuario no se encuentra en ninguna colección
     if (!usuario) {
       return res.status(401).json({ error: 'Usuario no encontrado' });
     }
@@ -31,17 +37,16 @@ router.post('/verifyToken', async (req, res) => {
     return res.status(200).json({
       Correo: usuario.Correo,
       Nombre: usuario.Nombre,
-      TipoUsuario: usuario.TipoUsuario,
-      ID: usuario._id // Asegúrate de usar "_id" si estás usando MongoDB
+      TipoUsuario: usuario.TipoUsuario || 'Paciente',
+      ID: usuario._id
     });
   } catch (err) {
-    // Verificar si el error es por un token inválido
+    // Manejo de errores de token
     if (err.name === 'TokenExpiredError') {
       return res.status(401).json({ error: 'Token expirado' });
     } else if (err.name === 'JsonWebTokenError') {
       return res.status(401).json({ error: 'Token inválido' });
     } else {
-      // Otros errores no relacionados con el token
       console.error(err);
       return res.status(500).json({ error: 'Error interno del servidor' });
     }

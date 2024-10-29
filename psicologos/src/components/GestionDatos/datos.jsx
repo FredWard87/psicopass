@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
@@ -6,13 +6,16 @@ import './css/PsychologistData.css';
 import Navigation from "../Navigation/Navbar";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import { jwtDecode } from 'jwt-decode';
 
 const PsychologistData = () => {
   const [psicologos, setPsychologists] = useState({});
   const [selectedWeek, setSelectedWeek] = useState(new Date());
   const [newTimeRange, setNewTimeRange] = useState({ 
     horaInicio: '', 
-    horaFin: '' 
+    horaFin: '',
+    semanaInicio: null,
+    semanaFin: null
   });
   const [loading, setLoading] = useState(false);
   const [newPsychologistData, setNewPsychologistData] = useState({
@@ -28,41 +31,53 @@ const PsychologistData = () => {
   const [showDeleteForm, setShowDeleteForm] = useState(false);
   const [selectedScheduleToDelete, setSelectedScheduleToDelete] = useState(null);
 
-  // Fetch psychologist data
-  const fetchPsychologistData = async () => {
+  const fetchPsychologistData = useCallback(async () => {
     console.log("Fetching psychologist data...");
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/psicologos`);
-      console.log("Psychologist data fetched:", response.data);
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        const psychologistData = response.data[0];
-        setPsychologists(psychologistData);
-        setNewPsychologistData({
-          Nombre: psychologistData.Nombre || '',
-          Correo: psychologistData.Correo || '',
-          Telefono: psychologistData.Telefono || '',
-          Filosofía: psychologistData.Filosofía || '',
-          Horario: psychologistData.Horario || [],
-          DescripciónDeTratamiento: psychologistData.DescripciónDeTratamiento || ''
-        });
-        // Load the schedule for the current week
-        loadWeekSchedule(new Date());
-      } else {
-        setPsychologists({});
-      }
+        const token = localStorage.getItem('token');
+        const decoded = jwtDecode(token);
+        
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/psicologos/${decoded.userId}`);
+        console.log("Psychologist data fetched:", response.data);
+        if (Array.isArray(response.data) && response.data.length > 0) {
+            const psychologistData = response.data[0];
+            // Asegurar que Horario tenga la estructura correcta
+            const formattedHorario = psychologistData.Horario.map(schedule => ({
+                ...schedule,
+                semanaInicio: new Date(schedule.semanaInicio),
+                semanaFin: new Date(schedule.semanaFin)
+            }));
+            
+            setPsychologists({
+                ...psychologistData,
+                Horario: formattedHorario
+            });
+            
+            setNewPsychologistData({
+                Nombre: psychologistData.Nombre || '',
+                Correo: psychologistData.Correo || '',
+                Telefono: psychologistData.Telefono || '',
+                Filosofía: psychologistData.Filosofía || '',
+                Horario: formattedHorario,
+                DescripciónDeTratamiento: psychologistData.DescripciónDeTratamiento || ''
+            });
+            loadWeekSchedule(new Date());
+        } else {
+            setPsychologists({});
+        }
     } catch (error) {
-      console.error('Error fetching psychologist data:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Error al cargar los datos del psicólogo'
-      });
+        console.error('Error fetching psychologist data:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al cargar los datos del psicólogo'
+        });
     }
-  };
+}, []);
 
   useEffect(() => {
     fetchPsychologistData();
-  }, []);
+  }, [fetchPsychologistData]);
 
   const handleTimeChange = (e) => {
     console.log("Time change:", e.target.name, e.target.value);
@@ -111,64 +126,111 @@ const PsychologistData = () => {
 
   const getWeekStart = (date) => {
     const d = new Date(date);
-    const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-    return new Date(d.setDate(diff));
-  };
+    const day = d.getDay(); // 0 es domingo, 1 es lunes, etc.
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Ajuste para el inicio de la semana
+    const startOfWeek = new Date(d.setDate(diff)); // Crear la fecha de inicio de la semana
+    startOfWeek.setHours(0, 0, 0, 0); // Establecer a medianoche
+    return startOfWeek;
+};
+
+
+const getWeekEnd = (date) => {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() + (6 - day); // Ajusta para obtener el sábado de esa semana
+  const endOfWeek = new Date(d.setDate(diff));
+  endOfWeek.setHours(23, 59, 59, 999); // Establecer a un milisegundo antes de medianoche
+  return endOfWeek;
+};
 
   const loadWeekSchedule = (date) => {
     const weekStart = getWeekStart(date);
+    const weekEnd = getWeekEnd(weekStart);
     const weekSchedule = psicologos.Horario?.find(schedule => 
       new Date(schedule.semanaInicio).toDateString() === weekStart.toDateString()
     );
     if (weekSchedule) {
       setNewTimeRange({
         horaInicio: weekSchedule.horaInicio,
-        horaFin: weekSchedule.horaFin
+        horaFin: weekSchedule.horaFin,
+        semanaInicio: weekStart,
+        semanaFin: weekEnd
       });
     } else {
-      setNewTimeRange({ horaInicio: '', horaFin: '' });
+      setNewTimeRange({ 
+        horaInicio: '', 
+        horaFin: '',
+        semanaInicio: weekStart,
+        semanaFin: weekEnd
+      });
     }
   };
 
   const handleWeeklyScheduleSubmit = async (e) => {
     e.preventDefault();
     const weekStart = getWeekStart(selectedWeek);
+    const weekEnd = getWeekEnd(selectedWeek); // Asegúrate de tener esta línea
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Establecer a medianoche para comparaciones
+
+    // Permitir la semana actual, bloquear semanas anteriores
+   
+    if (weekStart > today) {
+        const confirmation = await Swal.fire({
+            title: 'Confirmación',
+            text: `Estás asignando un horario a una fecha futura. La semana va del ${weekStart.toLocaleDateString()} al ${weekEnd.toLocaleDateString()}. ¿Estás seguro?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, continuar',
+            cancelButtonText: 'No, cancelar'
+        });
+
+        if (!confirmation.isConfirmed) {
+            return;
+        }
+    }
+
     const newSchedule = {
-      semanaInicio: weekStart,
-      horaInicio: newTimeRange.horaInicio,
-      horaFin: newTimeRange.horaFin
+        semanaInicio: weekStart,
+        semanaFin: weekEnd, 
+        horaInicio: newTimeRange.horaInicio,
+        horaFin: newTimeRange.horaFin
     };
 
     try {
-      setLoading(true);
-      const updatedHorario = psicologos.Horario.filter(schedule => 
-        new Date(schedule.semanaInicio).toDateString() !== weekStart.toDateString()
-      );
-      updatedHorario.push(newSchedule);
+        setLoading(true);
+        const updatedHorario = psicologos.Horario.filter(schedule => 
+            new Date(schedule.semanaInicio).toDateString() !== weekStart.toDateString()
+        ).map(schedule => ({
+            ...schedule,
+            semanaInicio: new Date(schedule.semanaInicio),
+            semanaFin: new Date(schedule.semanaFin) 
+        }));
+        
+        updatedHorario.push(newSchedule);
 
-      const response = await axios.put(
-        `${process.env.REACT_APP_BACKEND_URL}/api/psicologos/${psicologos._id}`,
-        { ...psicologos, Horario: updatedHorario }
-      );
-      console.log("Weekly schedule updated:", response.data);
-      setPsychologists(response.data);
-      Swal.fire({
-        icon: 'success',
-        title: 'Horario agregado',
-        text: 'El horario semanal ha sido agregado correctamente.',
-      });
+        const response = await axios.put(
+            `${process.env.REACT_APP_BACKEND_URL}/api/psicologos/${psicologos._id}`,
+            { ...psicologos, Horario: updatedHorario }
+        );
+        console.log("Horario semanal actualizado:", response.data);
+        setPsychologists(response.data);
+        Swal.fire({
+            icon: 'success',
+            title: 'Horario agregado',
+            text: 'El horario semanal ha sido agregado correctamente.',
+        });
     } catch (error) {
-      console.error("Error updating weekly schedule:", error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Ocurrió un error al actualizar el horario semanal.',
-      });
+        console.error("Error al actualizar el horario semanal:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error al actualizar el horario semanal.',
+        });
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
 
   const handleDeleteSchedule = (schedule) => {
     setSelectedScheduleToDelete(schedule);
@@ -221,7 +283,9 @@ const PsychologistData = () => {
     
     return (
       <div className="schedules-container">
-        <h3 className="week-title">Horario para la semana del {weekStart.toLocaleDateString()}</h3>
+        <h3 className="week-title">Horario para la semana</h3>
+        <p className="schedule-date"><span>Inicio de semana:</span> {new Date(weekSchedule.semanaInicio).toLocaleDateString()}</p>
+        <p className="schedule-date"><span>Fin de semana:</span> {new Date(weekSchedule.semanaFin).toLocaleDateString()}</p>
         <p className="schedule-time"><span>Hora de inicio:</span> {weekSchedule.horaInicio}</p>
         <p className="schedule-time"><span>Hora de fin:</span> {weekSchedule.horaFin}</p>
         <button onClick={() => handleDeleteSchedule(weekSchedule)} className="delete-button">
@@ -232,9 +296,15 @@ const PsychologistData = () => {
   };
 
   const renderWeeklyScheduleForm = () => {
+    const weekStart = getWeekStart(selectedWeek);
+    const weekEnd = getWeekEnd(weekStart);
+    
     return (
       <form onSubmit={handleWeeklyScheduleSubmit} className="weekly-schedule-form">
-        <h3 className="form-title">Definir horario para la semana del {getWeekStart(selectedWeek).toLocaleDateString()}</h3>
+        <h3 className="form-title">Definir horario para la semana</h3>
+        <p className="week-dates">
+          Del {weekStart.toLocaleDateString()} al {weekEnd.toLocaleDateString()}
+        </p>
         <div className="time-inputs">
           <label className="time-label">
             Hora de inicio:
@@ -267,12 +337,14 @@ const PsychologistData = () => {
   };
 
   const renderDeleteScheduleForm = () => {
+    if (!selectedScheduleToDelete) return null;
+
     return (
       <div className="modal-overlay active">
         <div className="modal active">
           <span className="close-button" onClick={() => setShowDeleteForm(false)}>&times;</span>
           <h3 className="modal-title">Eliminar Horario Semanal</h3>
-          <p>¿Estás seguro de que deseas eliminar el horario para la semana del {new Date(selectedScheduleToDelete?.semanaInicio).toLocaleDateString()}?</p>
+          <p>¿Estás seguro de que deseas eliminar el horario para la semana del {new Date(selectedScheduleToDelete.semanaInicio).toLocaleDateString()} al {new Date(selectedScheduleToDelete.semanaFin).toLocaleDateString()}?</p>
           <button onClick={handleDeleteScheduleConfirm} disabled={loading} className="form-submit-button">
             {loading ? 'Eliminando...' : 'Confirmar Eliminación'}
           </button>
@@ -356,7 +428,7 @@ const PsychologistData = () => {
                 <label className="form-label">
                   Descripción del tratamiento:
                   <textarea
-                    name="Descripción"
+                    name="DescripciónDeTratamiento" 
                     value={newPsychologistData.DescripciónDeTratamiento}
                     onChange={handlePsychologistDataChange}
                     required

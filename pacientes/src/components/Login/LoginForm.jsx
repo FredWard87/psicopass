@@ -38,11 +38,11 @@ const LoginForm = () => {
     mostrarCargando();
   
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`, formData);
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/login/patient`, formData);
       const { token, usuario } = response.data;
   
       // Verificación del tipo de usuario (si solo permites administradores o psicólogos)
-      if (usuario.TipoUsuario !== 'Administrador' && usuario.TipoUsuario !== 'Pacientes') {
+      if (usuario.TipoUsuario !== 'Administrador' && usuario.TipoUsuario !== 'Paciente') {
         Swal.fire({
           icon: 'error',
           title: 'Acceso denegado',

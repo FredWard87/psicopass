@@ -1,73 +1,73 @@
 body {
     background-color: #c4eef5;
-}
-
-.login-container-all{
     margin: 0;
     padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.login-container-all {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
 }
 
-.logo-empresa-login {
-    width: 450px; /* Ajusta el tamaño como prefieras */
-    height: auto; /* Mantiene la proporción de la imagen */
-  }
-  
-
 .login-container {
-    width: 90%;
+    width: 100%;
     max-width: 400px; /* Tamaño máximo del contenedor */
-    height: 400px; 
     padding: 20px;
     background-color: #ffffff; 
     border: 3px solid #000000;
-    border-radius: 3%; 
+    border-radius: 5%; 
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
     text-align: center; 
 }
 
-.login-container h2 {
-    margin-bottom: 20px;
-    color: #228b22; /* Color de texto verde oscuro */
+.logo-empresa-login {
+    max-width: 70%; /* Ajusta el tamaño como prefieras */
+    height: auto; /* Mantiene la proporción de la imagen */
+    border-radius: 10px;
+    margin: 0 auto 20px auto; 
 }
 
-.login-form .form-group {
-    margin-bottom: 50px;
+.tipo-usuario {
+    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 1.2em;
+    text-transform: uppercase;
+    color: #333;
 }
 
 .espacio {
-    margin-bottom: 60px;
+    margin-bottom: 40px;
+}
+
+.login-form .form-group {
+    margin-bottom: 20px;
 }
 
 .login-form label {
     display: none; /* Oculta las etiquetas de los campos */
 }
 
-.error-message {
-    color: red;
-    font-weight: bold;
-    background-color: #ffffff;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    text-align: center;
-    margin: 0 auto 20px auto;
-}
-
 .login-form input[type="email"],
-.login-form input[type="password"] {
-    width: 90%;
+.login-form input[type="password"],
+.login-form input[type="text"],
+.login-form textarea {
+    width: 100%;
     padding: 12px;
     border: 1px solid #228b22; /* Borde verde */
     border-radius: 5px;
     box-sizing: border-box;
     text-align: center; /* Centra el texto en el campo de entrada */
     font-size: 16px; /* Aumenta el tamaño del texto */
-    background-color: #ffffff; /* Fondo blanco para los campos de entrada */
+    background-color: #f9f9f9; /* Fondo claro para los campos de entrada */
+    margin-bottom: 20px;
+}
+
+.login-form textarea {
+    resize: none; /* Evita que el área de texto sea redimensionable */
+    height: 80px;
 }
 
 .btn-login {
@@ -82,7 +82,8 @@ body {
     color: #ffffff; /* Texto blanco */
     cursor: pointer;
     transition: background-color 0.3s ease; /* Transición suave */
-    width: 90%; /* Ancho completo del botón */
+    width: 100%; /* Ancho completo del botón */
+    margin-top: 20px;
 }
 
 .btn-login:hover {
@@ -91,67 +92,70 @@ body {
 
 .error-message {
     color: red;
-    margin-bottom: 20px;
     font-weight: bold;
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    text-align: center;
+    margin: 0 auto 20px auto;
 }
 
-.logo-empresa-login {
-    height: auto;
-    max-width: 60%;
-    border-radius: 10px;
-    margin: 0 auto 20px auto; 
-    display: block;
+.toggle-register {
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.toggle-register span {
+    color: #00B096;
+    cursor: pointer;
+}
+
+.toggle-register span:hover {
+    text-decoration: underline;
 }
 
 /* Consultas de medios para pantallas pequeñas */
 @media (max-width: 768px) {
     .login-container {
-        width: 90%;
-        max-width: 300px; /* Tamaño máximo para pantallas pequeñas */
-        padding: 15px;
-    }
-
-    .login-form input[type="email"],
-    .login-form input[type="password"] {
-        font-size: 14px; /* Reduce el tamaño del texto para pantallas pequeñas */
+        max-width: 350px; /* Tamaño máximo para pantallas pequeñas */
     }
 
     .btn-login {
-        padding: 10px 20px; /* Ajusta el tamaño del botón */
+        padding: 12px 20px; /* Ajusta el tamaño del botón */
         font-size: 14px;
     }
 }
 
 @media (max-width: 480px) {
     .login-container {
-        width: 90%;
-        height: 370px; 
-        max-width: 250px; 
-        padding: 10px;
+        max-width: 280px; 
+        padding: 15px;
     }
 
     .login-form input[type="email"],
-    .login-form input[type="password"] {
-        font-size: 12px; 
+    .login-form input[type="password"],
+    .login-form input[type="text"],
+    .login-form textarea {
+        font-size: 14px; 
+        padding: 10px;
     }
 
     .btn-login {
-        padding: 15px 16px;
-        font-size: 12px;
+        padding: 10px 16px;
+        font-size: 14px;
     }
 
-    .logo-empresa-login{
-        max-width: 75%;
+    .logo-empresa-login {
+        max-width: 80%;
     }
 
     .login-form .form-group {
-        margin-bottom: 40px;
+        margin-bottom: 15px;
     }
-}
 
-.tipo-usuario{
-    margin-top: -10px;
-    margin-bottom: -40px;
-    font-weight: bold;
-    font-display: flex;
+    .toggle-register {
+        font-size: 12px;
+    }
 }

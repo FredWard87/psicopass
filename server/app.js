@@ -8,6 +8,12 @@ const dotenv = require('dotenv');
 const loginRoutes = require('./routes/loginRoutes');
 const authRoutes = require('./routes/authRoutes');
 const psychologistRoutes = require('./routes/psychologistRoutes');
+const pacientroutes=require('./routes/pacienteRoutes')
+const authRoutes2 = require('./routes/authRoutes2');
+const citasRoutes = require('./routes/solicitarCitaRoutes');
+
+
+
 
 dotenv.config();
 
@@ -17,7 +23,7 @@ const app = express();
 app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ limit: '100mb', extended: true }));
 
-const mongo = require('../server/config/dbconfig'); // Asegúrate de que la conexión a la base de datos esté configurada correctamente
+const mongo = require('../server/config/dbconfig'); 
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -30,7 +36,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Configura las rutas
 app.use('/', loginRoutes);
 app.use('/auth', authRoutes);
-app.use('/api', psychologistRoutes); // O donde quieras montar las rutas
+app.use('/api', psychologistRoutes); 
+app.use('/',pacientroutes)
+app.use('/auth2', authRoutes2);
+app.use('/api/citas', citasRoutes);
+
+
+
 
 // Manejar la ruta raíz
 app.get('/', (req, res) => {
